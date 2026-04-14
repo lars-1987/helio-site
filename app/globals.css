@@ -1,0 +1,158 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- Legal page prose ---------------------------------------------- */
+.prose-helio h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+}
+.prose-helio .meta {
+  font-size: 0.875rem;
+  opacity: 0.5;
+  margin-bottom: 2.5rem;
+}
+.prose-helio h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+.prose-helio p {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  opacity: 0.7;
+  margin-bottom: 1rem;
+}
+.prose-helio ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+.prose-helio li {
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
+}
+.prose-helio a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-helio a:hover {
+  opacity: 1;
+}
+
+html {
+  /* Gentle snap — each full-height section locks into place on scroll
+     pauses but doesn't fight the user. */
+  scroll-snap-type: y proximity;
+  scroll-behavior: smooth;
+  /* Offset snap positions so sections land below the fixed topbar,
+     preventing the heading from clipping behind it. */
+  scroll-padding-top: 64px;
+
+  /* Preview card scale — see @media height tiers below. */
+  --preview-scale: 1;
+
+  /* Calendar timeline row height — tighter on phone. */
+  --hour-height: 32px;
+}
+
+/* ---- Preview card scale tiers ------------------------------------
+   CSS calc() can't produce a unitless number from viewport units, so we
+   use discrete media query steps instead of continuous clamp(). Each
+   tier shrinks the preview card proportionally so the hero + preview
+   fit inside the viewport. At < md: width the transform is skipped
+   entirely and the card uses its single-column phone layout.
+
+   Height tiers (from tallest to shortest — last match wins):
+*/
+@media (max-height: 1100px) { html { --preview-scale: 0.90; } }
+@media (max-height: 1000px) { html { --preview-scale: 0.86; } }
+@media (max-height:  920px) { html { --preview-scale: 0.82; } }
+@media (max-height:  840px) { html { --preview-scale: 0.74; } }
+@media (max-height:  760px) { html { --preview-scale: 0.68; } }
+@media (max-height:  600px) { html { --preview-scale: 0.52; } }
+
+@media (min-width: 768px) {
+  html {
+    --hour-height: 56px;
+  }
+}
+
+html,
+body {
+  background-color: #FFD8CA;
+  color: #1C1917;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ---- Preview card scale wrapper ----------------------------------- */
+/*
+  On phone / tablet widths (<md:) the preview card renders at its
+  natural flow size in a single column — no transform, no fixed height.
+  At md: and up we switch to the desktop model: lock native 576px
+  height, apply transform: scale(), and collapse the wrapper to the
+  scaled height so surrounding layout reflows correctly.
+
+  transform-origin is top center so the scaled card aligns with the
+  headline above.
+*/
+.preview-scale-wrapper {
+  width: 100%;
+  max-width: 80rem;
+  margin-inline: auto;
+}
+
+/* Phone: cap the card height so it doesn't overflow the section */
+@media (max-width: 767px) {
+  .preview-scale-card {
+    max-height: min(60svh, 420px);
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 768px) {
+  .preview-scale-wrapper {
+    height: calc(700px * var(--preview-scale));
+  }
+  .preview-scale-card {
+    width: 100%;
+    max-width: 80rem;
+    height: 700px;
+    transform: scale(var(--preview-scale));
+    transform-origin: top center;
+  }
+}
+
+/* ---- Section reveal system ---------------------------------------- */
+/*
+  Elements marked with [data-reveal] start hidden (opacity 0, translated
+  down). When their closest section crosses the viewport's reveal
+  threshold, a small client script adds data-reveal-active="true" to the
+  SECTION, which cascades to every [data-reveal] child. Stagger order is
+  controlled per-child via the --reveal-order custom property.
+*/
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--reveal-order, 0) * 110ms);
+  will-change: opacity, transform;
+}
+
+[data-reveal-active="true"] [data-reveal] {
+  opacity: 1;
+  transform: translateY(0);
+}
