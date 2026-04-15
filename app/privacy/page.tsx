@@ -3,6 +3,13 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Privacy Policy — Helio",
+  description: "How Helio handles your data and privacy.",
+  alternates: { canonical: "/privacy" },
+  openGraph: {
+    title: "Privacy Policy — Helio",
+    description: "How Helio handles your data and privacy.",
+    url: "https://gethelio.app/privacy",
+  },
 };
 
 export default function PrivacyPage() {
