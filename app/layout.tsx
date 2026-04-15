@@ -34,10 +34,6 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     images: ["/appicon.png"],
   },
-  icons: {
-    icon: "/appicon.png",
-    apple: "/appicon.png",
-  },
   robots: {
     index: true,
     follow: true,
